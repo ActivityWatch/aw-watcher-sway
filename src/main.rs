@@ -92,7 +92,6 @@ fn main() {
                 // remove "" from appname and title
                 let appname = appname_raw[1..appname_raw.len()-1].to_string();
                 let title = title_raw[1..title_raw.len()-1].to_string();
-                println!("{}: {}", &appname, &title);
 
                 let mut data = Map::new();
                 data.insert("app".to_string(), Value::String(appname));
@@ -104,7 +103,11 @@ fn main() {
                     let prev_timestamp = DateTime::parse_from_rfc3339(&e.timestamp).unwrap();
                     let pulsetime = now.timestamp_millis() - prev_timestamp.timestamp_millis() + 1000;
                     e.timestamp = now.to_rfc3339();
-                    aw_client.heartbeat(&window_bucket, &e, pulsetime as f64).unwrap();
+                    println!("{}s - {}: {}", &pulsetime/1000, &e.data["app"], &e.data["title"]);
+                    match aw_client.heartbeat(&window_bucket, &e, pulsetime as f64) {
+                        Ok(_) => (),
+                        Err(e) => println!("{:?}", e),
+                    };
                 }
 
                 let event = aw_client_rust::Event {
@@ -113,7 +116,10 @@ fn main() {
                     id: None,
                     data: data,
                 };
-                aw_client.heartbeat(&window_bucket, &event, 0.0).unwrap();
+                match aw_client.heartbeat(&window_bucket, &event, 0.0) {
+                    Ok(_) => (),
+                    Err(e) => println!("{:?}", e),
+                };
                 prev_event = Some(event);
 
                 let mut data = Map::new();
@@ -124,7 +130,10 @@ fn main() {
                     id: None,
                     data: data,
                 };
-                aw_client.heartbeat(&afk_bucket, &afk_event, 120.0).unwrap();
+                match aw_client.heartbeat(&afk_bucket, &afk_event, 120.0) {
+                    Ok(_) => (),
+                    Err(e) => println!("{:?}", e),
+                };
             }
         }
     }
