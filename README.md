@@ -1,5 +1,7 @@
-aw-watcher-sway
-===============
+DEPRECATED
+==========
+
+**This repository has been replaced with [ActivityWatch/aw-watcher-window-wayland](https://github.com/activitywatch/aw-watcher-window-wayland)**
 
 A prototype window+afk watcher for the sway window manager.
 
